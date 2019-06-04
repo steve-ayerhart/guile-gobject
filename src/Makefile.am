@@ -3,8 +3,11 @@ ggobjectlib_LTLIBRARIES = ggobject.la
 AM_CFLAGS = -I. $(WARN_CFLAGS) $(DEBUG_FLAGS) -fPIC
 
 C_FILES = \
-	gtype.c \
+	ggutils.c \
+  ggobject.c \
+	ggtype.c \
 	ggi-repository.c \
+	ggi-argument.c \
 	ggi-module.c
 
 H_FILES = $(C_FILES:.c=.h)
@@ -41,7 +44,7 @@ moddir=$(prefix)/share/guile/site/$(GUILE_EFFECTIVE_VERSION)
 godir=$(libdir)/guile/$(GUILE_EFFECTIVE_VERSION)/ccache
 
 SOURCES = \
-	g-object/g-type.scm \
+	g-object.scm \
 	g-object/introspection/repository.scm
 
 CLEANFILES = $(GOBJECTS) $(X_FILES) g-object/config.scm

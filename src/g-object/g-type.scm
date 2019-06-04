@@ -7,7 +7,7 @@
   (dynamic-call "scmg_type_init"
                 (dynamic-link (extensions-library "ggobject"))))
 
-(define-class <g-type> (<class>)
+(define-class <g-type> ()
   #:metaclass <g-type-class>)
 
 (define-method (allocate-instance (g-type-class <g-type-class>) initargs)

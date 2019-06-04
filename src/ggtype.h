@@ -8,6 +8,8 @@
 
 G_BEGIN_DECLS
 
+#define SET_GTYPE_SYMBOL(sym, val) scm_symbol_pset_x (sym, scm_from_ulong (val))
+
 static SCM scmg_type_metaclass;
 
 static SCM scm_make_class;
