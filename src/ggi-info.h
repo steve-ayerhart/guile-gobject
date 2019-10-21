@@ -3,8 +3,8 @@
  * vim: tabstop=4 shiftwidth=4 expandtab
  */
 
-#ifndef __GGI_INFO_H__
-#define __GGI_INFO_H__
+#ifndef __GUILE_GOBJECT_INTROSPECTION_INFO_H__
+#define __GUILE_GOBJECT_INTROSPECTION_INFO_H__
 
 #include <glib.h>
 #include <libguile.h>

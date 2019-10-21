@@ -11,13 +11,20 @@ C_FILES = \
 	ggclosure.c \
 	ggparameter.c \
 	ggobject.c \
+	ggi-cache.c \
+	ggi-argument.c \
+	ggi-basic-types.c \
+	ggi-value.c \
+	ggi-object.c \
+	ggi-enum-marshal.c \
+	ggi-array.c \
 	ggi-info.c \
 	ggi-repository.c
 
 H_FILES = $(C_FILES:.c=.h)
 X_FILES = $(C_FILES:.c=.x)
 
-ggobject_la_SOURCES = $(C_FILES) $(H_FILES) private.h
+ggobject_la_SOURCES = $(C_FILES) $(H_FILES) private.h ggi-invoke-state-struct.h
 
 ggobject_la_CFLAGS = $(GUILE_CFLAGS) $(GIR_CFLAGS) $(GLIB_CFLAGS) $(AM_CFLAGS)
 ggobject_la_LIBADD = $(GUILE_LIBS) $(GIR_LIBS) $(GLIB_LIBS)
@@ -49,6 +56,10 @@ godir=$(libdir)/guile/$(GUILE_EFFECTIVE_VERSION)/ccache
 
 SOURCES = \
 	gobject/gtype.scm \
+	gobject/gvalue.scm \
+	gobject/gsignal.scm \
+	gobject/gparameter.scm \
+	gobject/gclosure.scm \
 	gobject/introspection.scm \
 	gobject/introspection/info.scm \
 	gobject/introspection/repository.scm \

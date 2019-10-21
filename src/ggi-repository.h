@@ -1,7 +1,7 @@
 /* -*- Mode: C; c-basic-offset: 4 -*-
  */
-#ifndef __GGI_REPOSITORY_H__
-#define __GGI_REPOSITORY_H__
+#ifndef __GUILE_GOBJECT_INTROSPECTION_REPOSITORY_H__
+#define __GUILE_GOBJECT_INTROSPECTION_REPOSITORY_H__
 
 #include <libguile.h>
 #include <girepository.h>
