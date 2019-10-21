@@ -4,16 +4,20 @@ AM_CFLAGS = -I. $(WARN_CFLAGS) $(DEBUG_FLAGS) -fPIC
 
 C_FILES = \
 	ggutils.c \
-  ggobject.c \
+	gc.c \
 	ggtype.c \
-	ggi-repository.c \
-	ggi-argument.c \
-	ggi-module.c
+	ggvalue.c \
+	ggsignal.c \
+	ggclosure.c \
+	ggparameter.c \
+	ggobject.c \
+	ggi-info.c \
+	ggi-repository.c
 
 H_FILES = $(C_FILES:.c=.h)
 X_FILES = $(C_FILES:.c=.x)
 
-ggobject_la_SOURCES = $(C_FILES) $(H_FILES)
+ggobject_la_SOURCES = $(C_FILES) $(H_FILES) private.h
 
 ggobject_la_CFLAGS = $(GUILE_CFLAGS) $(GIR_CFLAGS) $(GLIB_CFLAGS) $(AM_CFLAGS)
 ggobject_la_LIBADD = $(GUILE_LIBS) $(GIR_LIBS) $(GLIB_LIBS)
@@ -26,16 +30,16 @@ SUFFIXES = .x .c .scm
 .c.x:
 	guile-snarf $(ggobject_la_CFLAGS) $< > $@ || { rm $@; false; }
 
-BUILT_SOURCES = $(X_FILES) g-object/config.scm
+BUILT_SOURCES = $(X_FILES) gobject/config.scm
 
 ggobjectlibdir = $(libdir)/guile/$(GUILE_EFFECTIVE_VERSION)/extensions
 
 GOBJECTS = $(SOURCES:%.scm=%.go) ggobject.la
 
-g-object/config.scm: Makefile g-object/config.scm.in
-	mkdir -p g-object
+gobject/config.scm: Makefile gobject/config.scm.in
+	mkdir -p gobject
 	sed -e "s|@ggobjectlibdir\@|$(ggobjectlibdir)|" \
-		$(srcdir)/g-object/config.scm.in > g-object/config.scm
+		$(srcdir)/gobject/config.scm.in > gobject/config.scm
 
 EXTRA_DIST = $(SOURCES)
 GUILE_WARNINGS = -Wunbound-variable -Warity-mismatch -Wformat
@@ -44,7 +48,10 @@ moddir=$(prefix)/share/guile/site/$(GUILE_EFFECTIVE_VERSION)
 godir=$(libdir)/guile/$(GUILE_EFFECTIVE_VERSION)/ccache
 
 SOURCES = \
-	g-object.scm \
-	g-object/introspection/repository.scm
+	gobject/gtype.scm \
+	gobject/introspection.scm \
+	gobject/introspection/info.scm \
+	gobject/introspection/repository.scm \
+	gobject.scm
 
-CLEANFILES = $(GOBJECTS) $(X_FILES) g-object/config.scm
+CLEANFILES = $(GOBJECTS) $(X_FILES) gobject/config.scm

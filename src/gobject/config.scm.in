@@ -1,8 +1,8 @@
-(define-module (g-object config)
+(define-module (gobject config)
   #:export (extensions-library))
 
 (define *ggobjectlibdir*
-  (cond ((getenv "GGOBJECT_BUILD_DIR")
+  (cond ((getenv "GUILE_GOBJECT_BUILD_DIR")
          => (λ (builddir) (in-vicinity builddir ".libs")))
         (else "@ggobjectlibdir@")))
 

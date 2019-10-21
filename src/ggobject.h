@@ -1,28 +1,36 @@
-/* -*- Mode: C; c-basic-offset: 4 -*-
- */
-#ifndef __GGOBJECT_H__
-#define __GGOBJECT_H__
+#ifndef __GUILE_GOBJECT_H__
+#define __GUILE_GOBJECT_H__
 
-#include <glib.h>
-#include <glib-object.h>
-#include <libguile.h>
+#include "ggtype.h"
+#include "ggparameter.h"
+#include "ggvalue.h"
+#include "ggsignal.h"
+#include "ggutils.h"
 
 G_BEGIN_DECLS
 
-static SCM
-ggobject_get_direct_supers (GType gtype);
+#define SCM_GOBJECT_CLASSP(scm) \
+  scm_c_gtype_class_is_a_p (scm, G_TYPE_OBJECT)
 
-//static GType
-//ggtype_from_object (SCM scm_object);
+#define SCM_VALIDATE_GOBJECT_CLASS(pos, scm) \
+  SCM_MAKE_VALIDATE (pos, scm, GOBJECT_CLASSP)
 
-static SCM
-ggtype_to_class (GType gtype);
+#define SCM_VALIDATE_GOBJECT_CLASS_COPY(pos, scm, cvar) \
+  do { \
+    SCM_VALIDATE_GOBJECT_CLASS (pos, scm); \
+    SCM_VALIDATE_GTYPE_CLASS_COPY (pos, scm, cvar); \
+  } while (0)
 
-static SCM
-ggobject_lookup_class (GType gtype);
+#define SCM_GOBJECTP(scm) \
+  scm_c_gtype_instance_is_a_p (scm, G_TYPE_OBJECT)
 
-void
-ggobject_init (void);
+#define SCM_VALIDATE_GOBJECT(pos, scm) \
+  SCM_MAKE_VALIDATE (pos, scm, GOBJECTP)
+
+#define SCM_VALIDATE_GOBJECT_COPY(pos, scm, cvar) \
+  SCM_VALIDATE_GTYPE_INSTANCE_TYPE_COPY (pos, scm, G_TYPE_OBJECT, cvar)
+
+void scm_register_gobject_postmakefunc (GType type, gpointer (*postmakefunc) (gpointer));
 
 G_END_DECLS
 

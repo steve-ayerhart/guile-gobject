@@ -1,24 +1,32 @@
-#ifndef __GGUTILS_H__
-#define __GGUTILS_H__
+#ifndef __GUILE_GOBJECT_UTILS_H__
+#define __GUILE_GOBJECT_UTILS_H__
 
 #include <glib.h>
 #include <libguile.h>
-#include <girepository.h>
 
 G_BEGIN_DECLS
 
-/*
 #define SCM_TO_GPOINTER(scm) ((gpointer) SCM_UNPACK (scm))
-#define GPOINTER_TO_SCM(gptr) (SCM_PACK ((scm_t_bits) gptr))
+#define GPOINTER_TO_SCM(ptr) (SCM_PACK ((scm_t_bits) (ptr)))
 
-SCM
-ggerror_to_scm (GError *gerror);
+char* scm_to_locale_string_dynwind (SCM s);
+char* scm_to_utf8_stringn_dynwind (SCM s, size_t *lenp);
+char* scm_symbol_chars (SCM s);
+char* scm_symbol_chars_dynwind (SCM s);
+char* scm_keyword_chars (SCM s);
+char* scm_keyword_chars_dynwind (SCM s);
 
-void
-ggthrow_gerror (GError *gerror);
-*/
-void
-ggutils_init (void);
+void scm_dynwind_guile_v__p_p (void* (*dynwind)(void*(*)(void*), void*), void *func,
+                               void *arg1, void *arg2);
+void scm_dynwind_guile_v__p_p_p_p_p (void* (*dynwind)(void*(*)(void*), void*), void *func,
+                                     void *arg1, void *arg2, void *arg3,
+                                     void *arg4, void *arg5);
+void scm_dynwind_guile_v__p_u_p_p (void* (*dynwind)(void*(*)(void*), void*), void *func,
+                                   void *arg1, unsigned int arg2, void *arg3,
+                                   void *arg4);
+void scm_dynwind_guile_v__p_u_c_p (void* (*dynwind)(void*(*)(void*), void*), void *func,
+                                   void *arg1, unsigned int arg2, const void *arg3,
+                                   void *arg4);
 
 G_END_DECLS
 
