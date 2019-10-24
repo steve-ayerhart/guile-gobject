@@ -1,5 +1,6 @@
 /* -*- Mode: C; c-basic-offset: 4 -*-
  */
+
 #ifndef __GUILE_GOBJECT_INTROSPECTION_CACHE_H__
 #define __GUILE_GOBJECT_INTROSPECTION_CACHE_H__
 

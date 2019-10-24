@@ -25,7 +25,8 @@ ggi_marshal_from_scm_basic_type_cache_adapter (GGIInvokeState   *state,
 
 SCM
 ggi_marshal_to_scm_basic_type (GIArgument *arg,
-                               GITypeTag   type_tag);
+                               GITypeTag   type_tag,
+                               GITransfer  transfer);
 
 SCM
 ggi_marshal_to_scm_basic_type_cache_adapter (GGIInvokeState   *state,

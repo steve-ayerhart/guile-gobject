@@ -46,7 +46,7 @@ ggi_marshal_to_scm_basic_type_cache_adapter (GGIInvokeState *state,
                                              GIArgument *arg,
                                              gpointer *cleanup_data)
 {
-    return ggi_marshal_to_scm_basic_type (arg, arg_cache->type_tag);
+    return ggi_marshal_to_scm_basic_type (arg, arg_cache->type_tag, arg_cache->transfer);
 }
 
 gboolean
@@ -518,7 +518,8 @@ ggi_marshal_from_scm_basic_type (SCM scm_value,
 // marshalling to scheme is relatively straight forward.
 SCM
 ggi_marshal_to_scm_basic_type (GIArgument *arg,
-                               GITypeTag   type_tag)
+                               GITypeTag   type_tag,
+                               GITransfer  transfer)
 {
     g_debug ("ggi_marshal_to_scm_basic_type");
 
