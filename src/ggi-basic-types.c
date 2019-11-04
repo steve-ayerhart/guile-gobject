@@ -39,6 +39,20 @@ ggi_marshal_from_scm_basic_type_cache_adapter (GGIInvokeState   *state,
                                             cleanup_data);
 }
 
+static void
+marshal_cleanup_from_scm_utf8 (GGIInvokeState *state,
+                               GGIArgCache    *arg_cache,
+                               SCM             scm_arg,
+                               gpointer        data,
+                               gboolean        was_processed)
+{
+    // we strdup string so free unless ownship is transferred to c
+    if (was_processed && arg_cache->transfer == GI_TRANSFER_NOTHING)
+        {
+            g_free (data);
+        }
+}
+
 SCM
 ggi_marshal_to_scm_basic_type_cache_adapter (GGIInvokeState *state,
                                              GGICallableCache *callable_cache,
@@ -47,6 +61,19 @@ ggi_marshal_to_scm_basic_type_cache_adapter (GGIInvokeState *state,
                                              gpointer *cleanup_data)
 {
     return ggi_marshal_to_scm_basic_type (arg, arg_cache->type_tag, arg_cache->transfer);
+}
+
+static void
+marshal_cleanup_to_scm_utf8 (GGIInvokeState *state,
+                             GGIArgCache    *arg_cache,
+                             gpointer        cleanup_data,
+                             gpointer        data,
+                             gboolean        was_processed)
+{
+    if (arg_cache->transfer == GI_TRANSFER_EVERYTHING)
+        {
+            g_free (data);
+        }
 }
 
 gboolean
@@ -87,8 +114,6 @@ ggi_gpointer_from_scm (SCM scm_arg, gpointer *gpointer_)
             return FALSE;
         }
 }
-
-
 
 
 static gboolean
@@ -645,13 +670,13 @@ arg_basic_type_setup_from_info (GGIArgCache *arg_cache,
             if (direction & GGI_DIRECTION_FROM_SCM)
                 {
                     arg_cache->from_scm_marshaller = ggi_marshal_from_scm_basic_type_cache_adapter;
-                    // TODO: cleanup
+                    arg_cache->from_scm_cleanup = marshal_cleanup_from_scm_utf8;
                 }
 
             if (direction & GGI_DIRECTION_TO_SCM)
                 {
                     arg_cache->to_scm_marshaller = ggi_marshal_to_scm_basic_type_cache_adapter;
-                    // TODO: cleanup
+                    arg_cache->to_scm_cleanup = marshal_cleanup_to_scm_utf8;
                 }
 
             break;
