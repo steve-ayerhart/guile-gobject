@@ -3,21 +3,20 @@
  * vim: tabstop=4 shiftwidth=4 expandtab
  */
 
-
-// TODO: reorg
-
-#include <string.h>
-#include <time.h>
-
-#include <girffi.h>
-
 #include "ggi-argument.h"
+
+#include "ggi-value.h"
+#include "ggi-basic-types.h"
+#include "gi-info.h"
 
 #include "gtype.h"
 #include "gvalue.h"
 
-#include "ggi-value.h"
-#include "ggi-basic-types.h"
+
+#include <girffi.h>
+#include <string.h>
+#include <time.h>
+
 
 gboolean
 ggi_argument_to_gssize (GIArgument *arg_in,
@@ -47,7 +46,9 @@ ggi_argument_to_gssize (GIArgument *arg_in,
     case GI_TYPE_TAG_INT64:
       if (arg_in->v_int64 > G_MAXSSIZE || arg_in->v_int64 < G_MINSSIZE)
         {
-          // TODO: error
+          scm_misc_error ("ggi_argument_to_gssize",
+                          "Unable to marshal ~a to gssize",
+                          scm_from_locale_string (g_type_tag_to_string (type_tag)));
           return FALSE;
         }
       *gssize_out = (gssize) arg_in->v_int64;
@@ -55,13 +56,17 @@ ggi_argument_to_gssize (GIArgument *arg_in,
     case GI_TYPE_TAG_UINT64:
       if (arg_in->v_uint64 > G_MAXSSIZE || arg_in->v_uint64 < G_MINSSIZE)
         {
-          // TODO: error
+          scm_misc_error ("ggi_argument_to_gssize",
+                          "Unable to marshal ~a to gssize",
+                          scm_from_locale_string (g_type_tag_to_string (type_tag)));
           return FALSE;
         }
       *gssize_out = (gssize) arg_in->v_uint64;
       return TRUE;
     default:
-      // TODO error
+      scm_misc_error ("ggi_argument_to_gssize",
+                      "Unable to marshal ~a to gssize",
+                      scm_from_locale_string (g_type_tag_to_string (type_tag)));
       return FALSE;
     }
 }
@@ -191,7 +196,7 @@ _ggi_argument_array_length_marshal (gsize length_arg_index,
 }
 
 GArray *
-_gg_argument_to_array (GIArgument              *arg,
+_ggi_argument_to_array (GIArgument              *arg,
                        GGIArgArrayLengthPolicy  array_length_policy,
                        void                    *user_data1,
                        void                    *user_data2,
@@ -207,7 +212,9 @@ _gg_argument_to_array (GIArgument              *arg,
   g_return_val_if_fail (g_type_info_get_tag (type_info) == GI_TYPE_TAG_ARRAY, NULL);
 
   if (arg->v_pointer == NULL)
-    return NULL;
+    {
+      return NULL;
+    }
 
   switch (g_type_info_get_array_type (type_info))
     {
@@ -215,7 +222,7 @@ _gg_argument_to_array (GIArgument              *arg,
       is_zero_terminated = g_type_info_is_zero_terminated (type_info);
       item_type_info = g_type_info_get_param_type (type_info, 0);
 
-      item_size = _ggi_g_type_info_size (item_type_info);
+      item_size = _scmgi_c_g_type_info_size (item_type_info);
 
       g_base_info_unref ((GIBaseInfo *) item_type_info);
 
@@ -281,6 +288,7 @@ _gg_argument_to_array (GIArgument              *arg,
   return g_array;
 }
 
+// TODO: implement :D
 GIArgument
 _ggi_argument_from_object (SCM         scm_obj,
                            GITypeInfo *type_info,
