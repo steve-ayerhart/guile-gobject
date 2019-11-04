@@ -6,8 +6,8 @@
 #define __GUILE_GOBJECT_INTROSPECTION_INVOKE_H__
 
 
+#include "ggi-infos.h"
 #include "ggi-invoke-state-struct.h"
-#include "ggi-cache.h"
 
 #include <libguile.h>
 #include <girepository.h>

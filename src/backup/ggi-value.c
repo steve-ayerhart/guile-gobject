@@ -3,8 +3,7 @@
  */
 
 #include "ggi-basic-types.h"
-
-#include "gvalue.h"
+#include "ggvalue.h"
 
 GIArgument
 _ggi_argument_from_g_value (const GValue *value,

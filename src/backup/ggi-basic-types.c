@@ -4,7 +4,7 @@
 
 #include "ggi-basic-types.h"
 #include "ggi-argument.h"
-#include "gtype.h"
+#include "ggtype.h"
 
 #include <libguile.h>
 

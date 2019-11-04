@@ -13,10 +13,10 @@
 
 #include "ggi-argument.h"
 
-#include "gtype.h"
-#include "gvalue.h"
-
+#include "ggtype.h"
+#include "ggvalue.h"
 #include "ggi-value.h"
+#include "ggi-info.h"
 #include "ggi-basic-types.h"
 
 gboolean
