@@ -71,136 +71,135 @@ typedef enum {
 
 struct _GGIArgCache
 {
-  const gchar *arg_name;
+    const gchar *arg_name;
 
-  GGIMetaArgType meta_type;
-  gboolean is_pointer;
-  gboolean is_caller_allocates;
-  gboolean is_skipped;
-  gboolean allow_none;
-  gboolean has_default;
+    GGIMetaArgType meta_type;
+    gboolean is_pointer;
+    gboolean is_caller_allocates;
+    gboolean is_skipped;
+    gboolean allow_none;
+    gboolean has_default;
 
-  GGIDirection direction;
-  GITransfer transfer;
-  GITypeTag type_tag;
-  GITypeInfo *type_info;
+    GGIDirection direction;
+    GITransfer transfer;
+    GITypeTag type_tag;
+    GITypeInfo *type_info;
 
-  SCM scm_type;
+    SCM scm_type;
 
-  GGIMarshalFromScmFunc from_scm_marshaller;
-  GGIMarshalToScmFunc to_scm_marshaller;
+    GGIMarshalFromScmFunc from_scm_marshaller;
+    GGIMarshalToScmFunc to_scm_marshaller;
 
-  GGIMarshalCleanupFunc from_scm_cleanup;
-  GGIMarshalToScmCleanupFunc to_scm_cleanup;
+    GGIMarshalCleanupFunc from_scm_cleanup;
+    GGIMarshalToScmCleanupFunc to_scm_cleanup;
 
-  GDestroyNotify destroy_notify;
+    GDestroyNotify destroy_notify;
 
-  gssize c_arg_index;
-  gssize scm_arg_index;
+    gssize c_arg_index;
+    gssize scm_arg_index;
 
-  GIArgument default_value;
+    GIArgument default_value;
 };
 
 typedef struct _GGISequenceCache {
-  GGIArgCache arg_cache;
-  GGIArgCache *item_cache;
+    GGIArgCache arg_cache;
+    GGIArgCache *item_cache;
 } GGISequenceCache;
 
 typedef struct _GGIArgGArray
 {
-  GGISequenceCache sequence_cache;
-  gssize fixed_size;
-  gssize len_arg_index;
-  gboolean is_zero_terminated;
-  gsize item_size;
-  GIArrayType array_type;
+    GGISequenceCache sequence_cache;
+    gssize fixed_size;
+    gssize len_arg_index;
+    gboolean is_zero_terminated;
+    gsize item_size;
+    GIArrayType array_type;
 } GGIArgGArray;
 
 typedef struct _GGIInterfaceCache
 {
-  GGIArgCache arg_cache;
-  gboolean is_foreign;
-  GType g_type;
-  SCM scm_type;
-  GIInterfaceInfo *interface_info;
-  gchar *type_name;
+    GGIArgCache arg_cache;
+    gboolean is_foreign;
+    GType g_type;
+    SCM scm_type;
+    GIInterfaceInfo *interface_info;
+    gchar *type_name;
 } GGIInterfaceCache;
 
 typedef SCM (*ggi_gsubr_t)(void);
 
 struct _GGICallableCache
 {
-  const gchar *name;
-  const gchar *container_name;
-  const gchar *namespace;
+    const gchar *name;
+    const gchar *container_name;
+    const gchar *namespace;
 
-  GGICallingContext calling_context;
+    GGICallingContext calling_context;
 
-  GGIArgCache *return_cache;
-  GPtrArray *args_cache;
-  GSList *to_scm_args;
-  GSList *arg_name_list; /* for keyword arg matching */
-  GHashTable *arg_name_hash;
-  gboolean throws;
+    GGIArgCache *return_cache;
+    GPtrArray *args_cache;
+    GSList *to_scm_args;
+    GSList *arg_name_list; // for keyword arg matching
+    GHashTable *arg_name_hash;
+    gboolean throws;
 
-  /* Index of user_data arg passed to a callable. */
-  gssize user_data_index;
+    // Index of user_data arg passed to a callable.
+    gssize user_data_index;
 
-  /* Index of user_data arg that can eat variable args passed to a callable. */
-  gssize user_data_varargs_index;
+    // Index of user_data arg that can eat variable args passed to a callable.
+    gssize user_data_varargs_index;
 
-  /* Number of args already added */
-  gssize args_offset;
+    // Number of args already added
+    gssize args_offset;
 
-  /* Number of out args passed to g_function_info_invoke.
-   * This is used for the length of GGIInvokeState.out_values */
-  gssize n_to_scm_args;
+    // Number of out args passed to g_function_info_invoke.
+    // This is used for the length of GGIInvokeState.out_values
+    gssize n_to_scm_args;
 
-  /* If the callable return value gets used */
-  gboolean has_return;
+    // If the callable return value gets used
+    gboolean has_return;
 
-  /* The type used for returning multiple values or NULL */
-  SCM resultlist;
+    // The type used for returning multiple values or NULL
+    SCM resultlist;
 
-  /* Number of out args for g_function_info_invoke that will be skipped
-   * when marshaling to scheme due to them being implicitly available
-   * (list/array length).
-   */
-  gssize n_to_scm_child_args;
+    // Number of out args for g_function_info_invoke that will be skipped
+    // when marshaling to scheme due to them being implicitly available
+    // (list/array length).
+    gssize n_to_scm_child_args;
 
-  /* Number of scheme arguments expected for invoking the gi function. */
-  gssize n_scm_args;
+    // Number of scheme arguments expected for invoking the gi function.
+    gssize n_scm_args;
 
-  /* Minimum number of args required to call the callable from scheme.
-   * This count does not include args with defaults. */
-  gssize n_scm_required_args;
+    // Minimum number of args required to call the callable from scheme.
+    // This count does not include args with defaults.
+    gssize n_scm_required_args;
 
-  void     (*deinit)              (GGICallableCache *callable_cache);
+    void     (*deinit)              (GGICallableCache *callable_cache);
 
-  gboolean (*generate_args_cache) (GGICallableCache *callable_cache,
-                                   GICallableInfo *callable_info);
+    gboolean (*generate_args_cache) (GGICallableCache *callable_cache,
+                                     GICallableInfo *callable_info);
 };
 
 struct _GGIFunctionCache {
-  GGICallableCache callable_cache;
+    GGICallableCache callable_cache;
 
-  /* An invoker with ffi_cif already setup */
-  GIFunctionInvoker invoker;
+    // An invoker with ffi_cif already setup
+    GIFunctionInvoker invoker;
 
-  ffi_closure *wrapper_closure;
-  ffi_cif wrapper_cif;
-  void *wrapper;
+    ffi_closure *wrapper_closure;
+    ffi_cif wrapper_cif;
+    void *wrapper;
 
-  SCM (*invoke) (GGIFunctionCache *function_cache,
-                 GGIInvokeState *state,
-                 SCM scm_args,
-                 SCM scm_kwargs);
+    SCM (*invoke) (GGIFunctionCache *function_cache,
+                   GGIInvokeState *state,
+                   SCM scm_args,
+                   SCM scm_kwargs);
 };
 
 struct _GGIVFuncCache {
-  GGIFunctionWithInstanceCache fwi_cache;
+    GGIFunctionWithInstanceCache fwi_cache;
 
-  GIBaseInfo *info;
+    GIBaseInfo *info;
 };
 
 
@@ -288,14 +287,14 @@ ggi_closure_cache_new (GICallableInfo *info);
 inline static guint
 _ggi_callable_cache_args_len (GGICallableCache *cache)
 {
-  return ((cache)->args_cache)->len;
+    return ((cache)->args_cache)->len;
 }
 
 inline static GGIArgCache *
 _ggi_callable_cache_get_arg (GGICallableCache *cache,
                              guint             index)
 {
-  return (GGIArgCache *) g_ptr_array_index (cache->args_cache, index);
+    return (GGIArgCache *) g_ptr_array_index (cache->args_cache, index);
 }
 
 inline static void
@@ -303,7 +302,7 @@ _ggi_callable_cache_set_arg (GGICallableCache *cache,
                              guint             index,
                              GGIArgCache      *arg_cache)
 {
-  cache->args_cache->pdata[index] = arg_cache;
+    cache->args_cache->pdata[index] = arg_cache;
 }
 
 void
