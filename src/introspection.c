@@ -6,7 +6,7 @@ SCM_DEFINE (scm_gobject_constant_from_info, "%constant_from_info", 1, 0, 0,
             (SCM scm_info),
             "")
 {
-  
+  return SCM_UNSPECIFIED;
 }
 
 void

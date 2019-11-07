@@ -18,7 +18,7 @@ gsize _scmgi_c_g_type_info_size (GITypeInfo *type_info);
 
 GIBaseInfo * scm_object_get_gi_info (SCM scm_object);
 
-gchar * _scm_c_gi_base_info_get_fullname (GIBaseInfo *info);
+gchar * _scmgi_c_g_base_info_get_fullname (GIBaseInfo *info);
 
 SCM scm_c_gi_make_info (GIBaseInfo *info);
 

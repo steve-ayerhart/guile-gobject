@@ -325,7 +325,7 @@ ggi_arg_interface_setup (GGIInterfaceCache *iface_cache,
     g_base_info_ref ((GIBaseInfo *)iface_info);
     iface_cache->interface_info = iface_info;
     iface_cache->arg_cache.type_tag = GI_TYPE_TAG_INTERFACE;
-    iface_cache->type_name = _ggi_g_base_info_get_fullname (iface_info);
+    iface_cache->type_name = _scmgi_c_g_base_info_get_fullname (iface_info);
     iface_cache->g_type = g_registered_type_info_get_g_type ((GIRegisteredTypeInfo *) iface_info);
 
     return TRUE;
