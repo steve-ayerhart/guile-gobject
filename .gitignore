@@ -35,9 +35,8 @@ Makefile.in
 /m4
 .deps
 .libs
-/src/modules/pre-install-env
 /stamp-h1
 /GPATH
 /GRTAGS
 /GTAGS
-/src/gobject/config.scm
+/src/g-object/config.scm
