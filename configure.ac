@@ -4,7 +4,7 @@ AC_INIT([Guile Gobject], [0.1], [steve@ayerh.art],
 
 AC_CONFIG_MACRO_DIRS([m4])
 AC_CONFIG_AUX_DIR([build-aux])
-AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 
 AM_INIT_AUTOMAKE
 
