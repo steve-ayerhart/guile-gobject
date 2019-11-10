@@ -889,13 +889,11 @@ SCM_DEFINE (scm_c_g_function_info_to_scm, "%gi-function-info->scm", 1, 0, 0,
 
   function_name = scm_c_gtype_name_to_scheme_name (callable_cache->name);
 
-  scm_c_define_gsubr (function_name,
+  scm_function = scm_c_make_gsubr (function_name,
                       callable_cache->n_scm_required_args,
                       callable_cache->n_scm_args - callable_cache->n_scm_required_args,
                       0,
                       function_cache->wrapper);
-
-  scm_function = scm_variable_ref (scm_c_lookup (function_name));
 
   scm_callable_cache = scm_from_pointer (callable_cache, _scm_finalize_callable_cache);
   scm_set_object_property_x (scm_function,
