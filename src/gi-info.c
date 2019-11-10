@@ -1,6 +1,8 @@
 #include "gi-info.h"
 
 #include "ggi-cache.h"
+#include "ggi-argument.h"
+
 #include "utils.h"
 
 #include <glib.h>
@@ -31,7 +33,8 @@ _scmgi_c_g_type_tag_size (GITypeTag type_tag)
 {
   gsize size = 0;
 
-  switch (type_tag) {
+  switch (type_tag)
+    {
   case GI_TYPE_TAG_BOOLEAN:
     size = sizeof (gboolean);
     break;
@@ -82,8 +85,6 @@ _scmgi_c_g_type_tag_size (GITypeTag type_tag)
 
   return size; 
 }
-
-
 
 gsize
 _scmgi_c_g_type_info_size (GITypeInfo *type_info)
@@ -447,28 +448,43 @@ SCM_DEFINE (scm_g_registered_type_info_get_gtype, "%g-registered-type-info-get-g
 
 // GIConstantInfo
 
-SCM_DEFINE (scm_gi_constant_info_get_value, "%gi-constant-info-get-value", 1, 0, 0,
+SCM_DEFINE (scm_g_constant_info_get_value, "%g-constant-info-get-value", 1, 0, 0,
             (SCM scm_constant_info),
             "")
 {
   GITypeInfo *type_info;
   GIConstantInfo *constant_info;
   GIArgument value = {0};
+  gboolean free_array = FALSE;
   SCM scm_value;
 
   constant_info = (GIConstantInfo *) scm_object_get_gi_info (scm_constant_info);
 
   if (g_constant_info_get_value (constant_info, &value) < 0) {
-    return SCM_UNDEFINED;
+    scm_misc_error ("%gi-constant-info-get-value", "unabled to get value", NULL);
+    return SCM_UNSPECIFIED;;
   }
 
   type_info = g_constant_info_get_type (constant_info);
 
-  scm_value = gi_arg_to_scm (type_info, GI_TRANSFER_NOTHING, value);
+  if (g_type_info_get_tag (type_info) == GI_TYPE_TAG_ARRAY)
+    {
+      g_debug ("ARRAY");
+      value.v_pointer = _ggi_argument_to_array (&value, NULL, NULL, NULL,
+                                                type_info, &free_array);
+    }
+
+  scm_value = _ggi_argument_to_object (&value, type_info, GI_TRANSFER_NOTHING);
+
+  if (free_array)
+    {
+      g_array_free (value.v_pointer, FALSE);
+    }
+
   g_constant_info_free_value (constant_info, &value);
+  g_base_info_unref ((GIBaseInfo *) type_info);
 
-  scm_remember_upto_here_1 (constant_info);
-
+  g_debug ("WTF");
   return scm_value;
 }
 

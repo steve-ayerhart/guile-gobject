@@ -39,75 +39,14 @@
 static gboolean
 _arg_info_default_value (GIArgInfo *info, GIArgument *arg)
 {
-    if (g_arg_info_may_be_null (info)) {
-        arg->v_pointer = NULL;
-        return TRUE;
-    }
+    if (g_arg_info_may_be_null (info))
+        {
+            arg->v_pointer = NULL;
+            return TRUE;
+        }
 
     return FALSE;
 }
-
-void
-ggi_arg_cache_setup_scm_goops_type (GGIArgCache *arg_cache)
-{
-    g_debug ("ggi_arg_cache_setup_scm_goops_type");
-
-    switch (arg_cache->type_tag)
-        {
-        case GI_TYPE_TAG_VOID:
-            arg_cache->scm_type = scm_variable_ref (scm_c_public_lookup ("oop goops",
-                                                                         "<null>"));
-        case GI_TYPE_TAG_BOOLEAN:
-            arg_cache->scm_type = scm_variable_ref (scm_c_public_lookup ("oop goops",
-                                                                         "<boolean>"));
-        case GI_TYPE_TAG_INT8:
-        case GI_TYPE_TAG_UINT8:
-        case GI_TYPE_TAG_INT16:
-        case GI_TYPE_TAG_UINT16:
-        case GI_TYPE_TAG_INT32:
-        case GI_TYPE_TAG_UINT32:
-        case GI_TYPE_TAG_INT64:
-        case GI_TYPE_TAG_UINT64:
-            arg_cache->scm_type = scm_variable_ref (scm_c_public_lookup ("oop goops",
-                                                                         "<integer>"));
-            break;
-        case GI_TYPE_TAG_FLOAT:
-        case GI_TYPE_TAG_DOUBLE:
-            arg_cache->scm_type = scm_variable_ref (scm_c_public_lookup ("oop goops",
-                                                                         "<number>"));
-            break;
-        case GI_TYPE_TAG_UNICHAR:
-            arg_cache->scm_type = scm_variable_ref (scm_c_public_lookup ("oop goops",
-                                                                         "<char>"));
-            break;
-        case GI_TYPE_TAG_GTYPE:
-        case GI_TYPE_TAG_UTF8:
-        case GI_TYPE_TAG_FILENAME:
-            arg_cache->scm_type = scm_variable_ref (scm_c_public_lookup ("oop goops",
-                                                                         "<string>"));
-            break;
-        case GI_TYPE_TAG_ARRAY:
-            arg_cache->scm_type = scm_variable_ref (scm_c_public_lookup ("oop goops",
-                                                                         "<array>"));
-            break;
-        case GI_TYPE_TAG_GSLIST:
-            arg_cache->scm_type = scm_variable_ref (scm_c_public_lookup ("oop goops",
-                                                                         "<list>"));
-            break;
-        case GI_TYPE_TAG_GHASH:
-            arg_cache->scm_type = scm_variable_ref (scm_c_public_lookup ("oop goops",
-                                                                         "<hashtable>"));
-            break;
-        case GI_TYPE_TAG_INTERFACE:
-            arg_cache->scm_type = scm_c_gtype_to_class (((GGIInterfaceCache *) arg_cache)->g_type);
-            break;
-        default:
-            arg_cache->scm_type = scm_variable_ref (scm_c_public_lookup ("oop goops",
-                                                                         "<unknown>"));
-            g_critical ("don't know how convert to a goops type");
-        }
-}
-
 
 /* ggi_arg_base_setup:
  * arg_cache: argument cache to initialize
@@ -135,27 +74,34 @@ ggi_arg_base_setup (GGIArgCache *arg_cache,
     arg_cache->scm_arg_index = -1;
     arg_cache->c_arg_index = -1;
 
-    if (type_info != NULL) {
-        arg_cache->is_pointer = g_type_info_is_pointer (type_info);
-        arg_cache->type_tag = g_type_info_get_tag (type_info);
-        g_base_info_ref ((GIBaseInfo *) type_info);
-        arg_cache->type_info = type_info;
-    }
-
-    if (arg_info != NULL) {
-        if (!arg_cache->has_default) {
-            /* It is possible has_default was set somewhere else */
-            arg_cache->has_default = _arg_info_default_value (arg_info,
-                                                              &arg_cache->default_value);
+    if (type_info != NULL)
+        {
+            arg_cache->is_pointer = g_type_info_is_pointer (type_info);
+            arg_cache->type_tag = g_type_info_get_tag (type_info);
+            g_base_info_ref ((GIBaseInfo *) type_info);
+            arg_cache->type_info = type_info;
         }
-        arg_cache->arg_name = g_base_info_get_name ((GIBaseInfo *) arg_info);
-        arg_cache->allow_none = g_arg_info_may_be_null (arg_info);
 
-        if (arg_cache->type_tag == GI_TYPE_TAG_INTERFACE || arg_cache->type_tag == GI_TYPE_TAG_ARRAY)
-            arg_cache->is_caller_allocates = g_arg_info_is_caller_allocates (arg_info);
-        else
-            arg_cache->is_caller_allocates = FALSE;
-    }
+    if (arg_info != NULL)
+        {
+            if (!arg_cache->has_default)
+                {
+                    /* It is possible has_default was set somewhere else */
+                    arg_cache->has_default = _arg_info_default_value (arg_info,
+                                                                      &arg_cache->default_value);
+                }
+            arg_cache->arg_name = g_base_info_get_name ((GIBaseInfo *) arg_info);
+            arg_cache->allow_none = g_arg_info_may_be_null (arg_info);
+
+            if (arg_cache->type_tag == GI_TYPE_TAG_INTERFACE || arg_cache->type_tag == GI_TYPE_TAG_ARRAY)
+                {
+                    arg_cache->is_caller_allocates = g_arg_info_is_caller_allocates (arg_info);
+                }
+            else
+                {
+                    arg_cache->is_caller_allocates = FALSE;
+                }
+        }
 
     return TRUE;
 }
@@ -172,14 +118,22 @@ ggi_arg_cache_free (GGIArgCache *cache)
     g_debug ("ggi_arg_cache_free");
 
     if (cache == NULL)
-        return;
+        {
+            return;
+        }
 
     if (cache->type_info != NULL)
-        g_base_info_unref ((GIBaseInfo *)cache->type_info);
+        {
+            g_base_info_unref ((GIBaseInfo *)cache->type_info);
+        }
     if (cache->destroy_notify)
-        cache->destroy_notify (cache);
+        {
+            cache->destroy_notify (cache);
+        }
     else
-        g_slice_free (GGIArgCache, cache);
+        {
+            g_slice_free (GGIArgCache, cache);
+        }
 }
 
 /* GGIInterfaceCache */
@@ -268,7 +222,9 @@ ggi_arg_sequence_setup (GGISequenceCache *sc,
                              arg_info,
                              transfer,
                              direction))
-        return FALSE;
+        {
+            return FALSE;
+        }
 
     sc->arg_cache.destroy_notify = (GDestroyNotify) _sequence_cache_free_func;
     item_type_info = g_type_info_get_param_type (type_info, 0);
@@ -284,7 +240,9 @@ ggi_arg_sequence_setup (GGISequenceCache *sc,
     g_base_info_unref ((GIBaseInfo *) item_type_info);
 
     if (sc->item_cache == NULL)
-        return FALSE;
+        {
+            return FALSE;
+        }
 
     return TRUE;
 }
@@ -293,13 +251,19 @@ ggi_arg_sequence_setup (GGISequenceCache *sc,
 static void
 _interface_cache_free_func (GGIInterfaceCache *cache)
 {
-    if (cache != NULL) {
-        if (cache->type_name != NULL)
-            g_free (cache->type_name);
-        if (cache->interface_info != NULL)
-            g_base_info_unref ((GIBaseInfo *) cache->interface_info);
-        g_slice_free (GGIInterfaceCache, cache);
-    }
+    if (cache != NULL)
+        {
+            if (cache->type_name != NULL)
+                {
+                    g_free (cache->type_name);
+                }
+            if (cache->interface_info != NULL)
+                {
+                    g_base_info_unref ((GIBaseInfo *) cache->interface_info);
+                }
+
+            g_slice_free (GGIInterfaceCache, cache);
+        }
 }
 
 gboolean
@@ -316,17 +280,19 @@ ggi_arg_interface_setup (GGIInterfaceCache *iface_cache,
                              type_info,
                              arg_info,
                              transfer,
-                             direction)) {
-        return FALSE;
-    }
+                             direction))
+        {
+            return FALSE;
+        }
 
     ((GGIArgCache *) iface_cache)->destroy_notify = (GDestroyNotify)_interface_cache_free_func;
 
-    g_base_info_ref ((GIBaseInfo *)iface_info);
+    g_base_info_ref ((GIBaseInfo *) iface_info);
     iface_cache->interface_info = iface_info;
     iface_cache->arg_cache.type_tag = GI_TYPE_TAG_INTERFACE;
-    iface_cache->type_name = _scmgi_c_g_base_info_get_fullname (iface_info);
+    iface_cache->type_name = _ggi_g_base_info_get_fullname (iface_info);
     iface_cache->g_type = g_registered_type_info_get_g_type ((GIRegisteredTypeInfo *) iface_info);
+    iface_cache->scm_type = scmgi_c_type_import_by_gi_info ((GIBaseInfo *) iface_info);
 
     return TRUE;
 }
@@ -429,13 +395,15 @@ ggi_arg_cache_new (GITypeInfo *type_info,
                                                           callable_cache);
             break;
         case GI_TYPE_TAG_INTERFACE:
-            arg_cache = _arg_cache_new_for_interface ((GIInterfaceInfo *) g_type_info_get_interface (type_info),
-                                                      type_info,
-                                                      arg_info,
-                                                      transfer,
-                                                      direction,
-                                                      callable_cache);
-            //            g_base_info_unref ((GIBaseInfo *) interface_info);
+            {
+                arg_cache = _arg_cache_new_for_interface ((GIInterfaceInfo *) g_type_info_get_interface (type_info),
+                                                          type_info,
+                                                          arg_info,
+                                                          transfer,
+                                                          direction,
+                                                          callable_cache);
+                //                g_base_info_unref ((GIBaseInfo *) interface_info);
+            }
             break;
         case GI_TYPE_TAG_ERROR:
             arg_cache = ggi_arg_gerror_new_from_info (type_info,
@@ -453,8 +421,6 @@ ggi_arg_cache_new (GITypeInfo *type_info,
             arg_cache->c_arg_index = c_arg_index;
         }
 
-    ggi_arg_cache_setup_scm_goops_type (arg_cache);
-
     return arg_cache;
 }
 
@@ -462,17 +428,25 @@ static GGIDirection
 _ggi_get_direction (GGICallableCache *callable_cache, GIDirection gi_direction)
 {
     if (gi_direction == GI_DIRECTION_INOUT)
-        return GGI_DIRECTION_BIDIRECTIONAL;
+        {
+            return GGI_DIRECTION_BIDIRECTIONAL;
+        }
     else if (gi_direction == GI_DIRECTION_IN)
         {
             if (callable_cache->calling_context != GGI_CALLING_CONTEXT_IS_FROM_SCM)
-                return GGI_DIRECTION_TO_SCM;
+                {
+                    return GGI_DIRECTION_TO_SCM;
+                }
+
             return GGI_DIRECTION_FROM_SCM;
         }
     else
         {
             if (callable_cache->calling_context !=GGI_CALLING_CONTEXT_IS_FROM_SCM)
-                return GGI_DIRECTION_FROM_SCM;
+                {
+                    return GGI_DIRECTION_FROM_SCM;
+                }
+
             return GGI_DIRECTION_TO_SCM;
         }
 }
@@ -568,7 +542,9 @@ _callable_cache_generate_args_cache_real (GGICallableCache *callable_cache,
                                 }
 
                             if (direction & GGI_DIRECTION_TO_SCM)
-                                callable_cache->n_to_scm_args++;
+                                {
+                                    callable_cache->n_to_scm_args++;
+                                }
 
                             arg_cache->type_tag = g_type_info_get_tag (type_info);
                         }
@@ -624,9 +600,13 @@ _callable_cache_generate_args_cache_real (GGICallableCache *callable_cache,
         }
 
     if (callable_cache->arg_name_hash == NULL)
-        callable_cache->arg_name_hash = g_hash_table_new (g_str_hash, g_str_equal);
+        {
+            callable_cache->arg_name_hash = g_hash_table_new (g_str_hash, g_str_equal);
+        }
     else
-        g_hash_table_remove_all (callable_cache->arg_name_hash);
+        {
+            g_hash_table_remove_all (callable_cache->arg_name_hash);
+        }
 
     callable_cache->n_scm_required_args = 0;
     callable_cache->user_data_varargs_index = -1;
@@ -648,9 +628,11 @@ _callable_cache_generate_args_cache_real (GGICallableCache *callable_cache,
                                                                      arg_name);
 
                     if (arg_name != NULL)
-                        g_hash_table_insert (callable_cache->arg_name_hash,
-                                             arg_name,
-                                             GINT_TO_POINTER(i));
+                        {
+                            g_hash_table_insert (callable_cache->arg_name_hash,
+                                                 arg_name,
+                                                 GINT_TO_POINTER(i));
+                        }
 
                     if (callable_cache->n_scm_required_args > 0)
                         {
@@ -658,7 +640,9 @@ _callable_cache_generate_args_cache_real (GGICallableCache *callable_cache,
                             callable_cache->n_scm_required_args += 1;
                         }
                     else if (!arg_cache->has_default)
-                        callable_cache->n_scm_required_args += 1;
+                        {
+                            callable_cache->n_scm_required_args += 1;
+                        }
 
                     if (last_explicit_arg_index == -1)
                         {
@@ -671,7 +655,9 @@ _callable_cache_generate_args_cache_real (GGICallableCache *callable_cache,
         }
 
     if (!return_cache->is_skipped && return_cache->type_tag != GI_TYPE_TAG_VOID)
-        callable_cache->has_return = TRUE;
+        {
+            callable_cache->has_return = TRUE;
+        }
 
     return TRUE;
 }
@@ -697,19 +683,24 @@ _callable_cache_init (GGICallableCache *cache, GICallableInfo *callable_info)
     GIBaseInfo *container;
 
     if (cache->deinit == NULL)
-        cache->deinit = _callable_cache_deinit_real;
+        {
+            cache->deinit = _callable_cache_deinit_real;
+        }
 
     if (cache->generate_args_cache == NULL)
-        cache->generate_args_cache = _callable_cache_generate_args_cache_real;
+        {
+            cache->generate_args_cache = _callable_cache_generate_args_cache_real;
+        }
 
     cache->name = g_base_info_get_name ((GIBaseInfo *) callable_info);
     cache->namespace = g_base_info_get_namespace ((GIBaseInfo *) callable_info);
     container = g_base_info_get_container ((GIBaseInfo *) callable_info);
     cache->container_name = NULL;
 
-    if (container != NULL && g_base_info_get_type (container) != GI_INFO_TYPE_TYPE) {
-        cache->container_name = g_base_info_get_name (container);
-    }
+    if (container != NULL && g_base_info_get_type (container) != GI_INFO_TYPE_TYPE)
+        {
+            cache->container_name = g_base_info_get_name (container);
+        }
     cache->throws = g_callable_info_can_throw_gerror (callable_info);
 
     // TODO: handle deprecated
@@ -722,10 +713,11 @@ _callable_cache_init (GGICallableCache *cache, GICallableInfo *callable_info)
             g_ptr_array_set_size (cache->args_cache, n_args);
         }
 
-    if (!cache->generate_args_cache (cache, callable_info)) {
-        _callable_cache_deinit_real (cache);
-        return FALSE;
-    }
+    if (!cache->generate_args_cache (cache, callable_info))
+        {
+            _callable_cache_deinit_real (cache);
+            return FALSE;
+        }
 
     return TRUE;
 }
@@ -820,7 +812,9 @@ _function_cache_wrapper_init (GGIFunctionCache *function_cache,
     n_total_args = callable_cache->n_scm_required_args + n_opt_args;
 
     if (n_total_args > 0)
-        args = g_new0 (ffi_type *, n_total_args);
+        {
+            args = g_new0 (ffi_type *, n_total_args);
+        }
 
     for (int i = 0; i < n_total_args; i++)
         {

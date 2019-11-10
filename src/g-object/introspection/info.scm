@@ -20,6 +20,7 @@
             <gi-arg-info>
             <gi-type-info>
             <gi-constant-info>
+            value
             <gi-registered-type-info>
             gtype type-name
             <gi-struct-info>
@@ -125,6 +126,11 @@
 
 (define-method (attributes (info <gi-base-info>))
   (%g-base-info-get-attributes info))
+
+;;; constant
+
+(define-method (value (info <gi-constant-info>))
+  (%g-constant-info-get-value info))
 
 ;;; registered type
 

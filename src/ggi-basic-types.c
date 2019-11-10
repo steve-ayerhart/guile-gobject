@@ -590,24 +590,9 @@ ggi_marshal_to_scm_basic_type (GIArgument *arg,
             return scm_integer_to_char (scm_from_uint32 (arg->v_uint32));
 
         case GI_TYPE_TAG_UTF8:
-            if (!arg->v_string)
-                {
-                    return scm_c_make_string(0, SCM_MAKE_CHAR(0));
-                }
-            else
-                {
-                    return scm_from_utf8_string (arg->v_string);
-                }
-
+            return scm_from_utf8_string (arg->v_string);
         case GI_TYPE_TAG_FILENAME:
-            if (!arg->v_string)
-                {
-                    return scm_c_make_string(0, SCM_MAKE_CHAR(0));
-                }
-            else
-                {
-                    return scm_from_locale_string (arg->v_string);
-                }
+            return scm_from_locale_string (arg->v_string);
 
         default:
             scm_misc_error("argument marshal",

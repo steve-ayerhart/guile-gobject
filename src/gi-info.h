@@ -25,6 +25,8 @@ SCM scm_c_gi_make_info (GIBaseInfo *info);
 void scm_c_gi_info_early_init (void);
 void scm_c_gi_info_init (void);
 
+SCM scmgi_c_type_import_by_gi_info (GIBaseInfo *info);
+
 G_END_DECLS
 
 #endif /* __GUILE_GOBJECT_INTROSPECTION_INFO_H__ */
