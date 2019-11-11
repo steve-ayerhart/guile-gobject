@@ -87,10 +87,13 @@ the conventions of GLib libraries. For example:
 scheme form, such as @code{gtk-window}, taking into account the
 exceptions in @code{gtype-name->scheme-name-alist}, and trimming
 trailing dashes if any."
-  (string-trim-right
-   (camel-case->snake-case ;; only change _ to -, other characters are not valid in a type name
-    (string-map (lambda (c) (if (eq? c #\_) #\- c)) type-name))
-   #\-))
+  (let ((type-name (if (symbol? type-name) (symbol->string type-name) type-name)))
+    (string->symbol
+     (string-trim-right
+      (camel-case->snake-case
+       ;; only change _ to -, other characters are not valid in a type name
+       (string-map (lambda (c) (if (eq? c #\_) #\- c)) type-name))
+      #\-))))
 
 ;; "GtkAccelGroup" => <gtk-accel-group>
 ;; "GSource*" => <g-source*>
@@ -98,8 +101,7 @@ trailing dashes if any."
   "Transform a name of a @code{<gtype>}, such as \"GtkWindow\", to a
 suitable name of a Scheme class, such as @code{<gtk-window>}. Uses
 @code{g-type-name->scheme-name}."
-  (string->symbol
-   (string-append "<" (gtype-name->scheme-name type-name) ">")))
+   (symbol-append '< (gtype-name->scheme-name type-name) '>))
 
 (define (class-name->gtype-name class-name)
   "Convert the name of a class into a suitable name for a GType. For example:
